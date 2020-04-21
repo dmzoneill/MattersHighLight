@@ -265,9 +265,9 @@ function highlightWOO() {
 			$(this).closest('tr').css('background-color', '#ffaaa7')
 		}
 
-		if(text.indexOf("Waiting on Customer") != -1) {
-			$(this).closest('tr').css('background-color', '#fed8b1')
-		}
+		//if(text.indexOf("Waiting on Customer") != -1) {
+		//	$(this).closest('tr').css('background-color', '#fed8b1')
+		//}
 
 		if(text.indexOf("Resolved") != -1) {
 			$(this).closest('tr').css('background-color', '#90ee90')
