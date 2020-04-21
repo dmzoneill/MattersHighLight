@@ -257,6 +257,25 @@ function mapCustomerNamesToTicketHeader() {
 	});
 }
 
+function highlightWOO() {
+	$("td.dataCell").each(function() {
+		var text = $(this).text();
+		 
+		if(text.indexOf("Waiting on Operations") != -1) {
+			$(this).css('background-color', '#ffcccb')
+		}
+
+		if(text.indexOf("Waiting on Customer") != -1) {
+			$(this).css('background-color', '#fed8b1')
+		}
+
+		if(text.indexOf("Resolved") != -1) {
+			$(this).css('background-color', '#90ee90')
+		}
+	     
+	});
+}
+
 
 (function () {
 
@@ -298,5 +317,6 @@ function mapCustomerNamesToTicketHeader() {
 		if (parts.length == 4) {
 			loadSF($(".efhpTitle").text(), window.location.href);
 		}
+		highlightWOO()
 	}
 })();
