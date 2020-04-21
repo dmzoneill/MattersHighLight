@@ -262,7 +262,7 @@ function highlightWOO() {
 		var text = $(this).text();
 		 
 		if(text.indexOf("Waiting on Operations") != -1) {
-			$(this).closest('tr').css('background-color', '#ffcccb')
+			$(this).closest('tr').css('background-color', '#ffaaa7')
 		}
 
 		if(text.indexOf("Waiting on Customer") != -1) {
