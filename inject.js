@@ -262,15 +262,15 @@ function highlightWOO() {
 		var text = $(this).text();
 		 
 		if(text.indexOf("Waiting on Operations") != -1) {
-			$(this).css('background-color', '#ffcccb')
+			$(this).closest('tr').css('background-color', '#ffcccb')
 		}
 
 		if(text.indexOf("Waiting on Customer") != -1) {
-			$(this).css('background-color', '#fed8b1')
+			$(this).closest('tr').css('background-color', '#fed8b1')
 		}
 
 		if(text.indexOf("Resolved") != -1) {
-			$(this).css('background-color', '#90ee90')
+			$(this).closest('tr').css('background-color', '#90ee90')
 		}
 	     
 	});
