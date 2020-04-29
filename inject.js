@@ -324,6 +324,8 @@ function toggleCustomer(t, cust) {
 
 
 function addCaseFilters() {	
+	customers = []
+
 	$('table > tbody  > tr').each(function(i) {
 		var $this = $(this);
 		var my_td = $this.children("td");
@@ -337,23 +339,28 @@ function addCaseFilters() {
 
 	customers.sort(); 
 
-	$("<div class=\"customer-filter\"></div>").insertAfter($(".page-header"))
+	if($(".customer-filter").length) {
 
-	for(var t=0; t < customers.length; t++) {
-		$(".customer-filter").append("<div class='customerspan' id='cust" + t + "'><a id='custlink" + t + "' style='color:#FFFFFF'>" + customers[t] + "</a></div>");
-		$("#custlink" + t).click(function(){
-			toggleCustomer($(this).attr('id').substring(8), $(this).text());
-		});
 	}
-	$(".customerspan").css(
-		{
-			"display": "inline-block", 
-			"padding": "5px", 
-			"margin":"5px", 
-			"border": "1px solid green", 
-			"background-color": "#88B04B"
+	else {
+		$("<div class=\"customer-filter\"></div>").insertAfter($(".page-header"))
+
+		for(var t=0; t < customers.length; t++) {
+			$(".customer-filter").append("<div class='customerspan' id='cust" + t + "'><a id='custlink" + t + "' style='color:#FFFFFF'>" + customers[t] + "</a></div>");
+			$("#custlink" + t).click(function(){
+				toggleCustomer($(this).attr('id').substring(8), $(this).text());
+			});
 		}
-	);
+		$(".customerspan").css(
+			{
+				"display": "inline-block", 
+				"padding": "5px", 
+				"margin":"5px", 
+				"border": "1px solid green", 
+				"background-color": "#88B04B"
+			}
+		);
+	}
 }
 
 
