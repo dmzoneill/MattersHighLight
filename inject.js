@@ -4,6 +4,8 @@ var eodlog = [];
 var pastes = [];
 var pagerDuty = [];
 var salesforce = [];
+var selected = [];
+var customers = [];
 
 
 function setup() {
@@ -272,9 +274,88 @@ function highlightWOO() {
 		if(text.indexOf("Resolved") != -1) {
 			$(this).closest('tr').css('background-color', '#90ee90')
 		}
+
+		if(text.indexOf("Waiting on Support") != -1) {
+			$(this).closest('tr').css('background-color', '#ffaaa7')
+		}		
 	     
 	});
 }
+
+function toggleCustomer(t, cust) {
+
+	if(selected.indexOf(cust) == -1) {
+		selected.push(cust);
+		$("#cust" + t).css(
+			{
+				"display": "inline-block", 
+				"padding": "5px", 
+				"margin":"5px", 
+				"border": "2px solid red", 
+				"background-color": "#88B04B"
+			}
+		);
+	} else {
+		selected.splice(selected.indexOf(cust),1);
+		$("#cust" + t).css(
+			{
+				"display": "inline-block", 
+				"padding": "5px", 
+				"margin":"5px", 
+				"border": "1px solid green", 
+				"background-color": "#88B04B"
+			}
+		);
+	}
+
+	console.log(selected);
+
+	$('table > tbody  > tr').each(function(i) {
+		var my_td = $(this).children("td");
+		var second_col = my_td.eq(0);
+
+		if(selected.indexOf(second_col.text()) > -1 || selected.length == 0) {
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	});
+}
+
+
+function addCaseFilters() {	
+	$('table > tbody  > tr').each(function(i) {
+		var $this = $(this);
+		var my_td = $this.children("td");
+		var second_col = my_td.eq(0);
+		//var third_col = my_td.eq(2);
+		if(customers.indexOf(second_col.text()) == -1) {
+			if(second_col.text().trim() == "") return;
+			customers.push(second_col.text());
+		}
+	});
+
+	customers.sort(); 
+
+	$("<div class=\"customer-filter\"></div>").insertAfter($(".page-header"))
+
+	for(var t=0; t < customers.length; t++) {
+		$(".customer-filter").append("<div class='customerspan' id='cust" + t + "'><a id='custlink" + t + "' style='color:#FFFFFF'>" + customers[t] + "</a></div>");
+		$("#custlink" + t).click(function(){
+			toggleCustomer($(this).attr('id').substring(8), $(this).text());
+		});
+	}
+	$(".customerspan").css(
+		{
+			"display": "inline-block", 
+			"padding": "5px", 
+			"margin":"5px", 
+			"border": "1px solid green", 
+			"background-color": "#88B04B"
+		}
+	);
+}
+
 
 
 (function () {
@@ -319,4 +400,8 @@ function highlightWOO() {
 		}
 		highlightWOO()
 	}
+
+	if (window.location.href.indexOf("https://portal.admin.canonical.com/bootstack/cases/") != -1) {
+		addCaseFilters();	
+	}	
 })();
