@@ -1,7 +1,5 @@
 # MattersHighLight
 
-In orderr to workaround policy restrictions on background sounds you need to launch chrome with
-
 Get started:
 
 ```
@@ -14,7 +12,8 @@ Modify manifest.json (to provide your own sounds) if you wish:
 vim manifest.json
 ```
 <br>
-open chrome:
+In order to workaround policy restrictions on background sounds you need to launch chrome with:
+
 
 ```
 /opt/google/chrome/chrome --autoplay-policy=no-user-gesture-required --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio,MediaEngagementBypassAutoplayPolicies
