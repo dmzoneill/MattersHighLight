@@ -9,7 +9,7 @@ git clone https://github.com/dmzoneill/MattersHighLight.git
 ```
 <br>
 Modify manifest.json (to provide your own sounds) if you wish
-<br>
+
 ```
 vim manifest.json
 ```
@@ -31,10 +31,9 @@ Visit your matters most website
 ```
 click settings, provide MM auth token and pagerduty key
 ```
-<br>
-<br>
-<br>
-![alt text](https://raw.githubusercontent.com/dmzoneill/MattersHighLight/master/2.png)
 
 <br>
-![alt text](https://raw.githubusercontent.com/dmzoneill/MattersHighLight/master/1.png)
+![overview1](https://raw.githubusercontent.com/dmzoneill/MattersHighLight/master/2.png)
+
+<br>
+![overview2](https://raw.githubusercontent.com/dmzoneill/MattersHighLight/master/1.png)
