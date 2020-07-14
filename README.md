@@ -33,7 +33,7 @@ click settings, provide MM auth token and pagerduty key
 ```
 
 <br>
-![overview1](2.png)
+![overview1](2.png?raw=true "overview1")
 
 <br>
-![overview2](1.png)
+![overview2](1.png?raw=true "overview2")
