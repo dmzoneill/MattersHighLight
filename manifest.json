@@ -1,8 +1,7 @@
 {
     "manifest_version": 2, 
-    "name": "Canonical Triage Queue", 
-    "options_page": "options.html",
-    "description": "Click approve on events",
+    "name": "MatterMost Highlight Monitor", 
+    "description": "Highlight monitor and more",
     "version": "1.0",
     "author": "David O Neill",
     "background": {
@@ -11,8 +10,25 @@
     ],
     "persistent": true
   },
+  "web_accessible_resources": [
+    "fart1.mp3",
+    "fart2.mp3",
+    "fart3.mp3",
+    "fart4.mp3",
+    "fart5.mp3",
+    "fart6.mp3",
+    "fart7.mp3",
+    "fart8.mp3",
+    "flush.mp3",
+    "facebook.mp3",
+    "up.png",
+    "down.png",
+    "alert.png",
+    "settings.png",
+    "play.png"
+  ],
   "browser_action": {
-    "default_title": "Inject!"
+    "default_title": "MatterMost Highlight Monitor"
   },
   "permissions": [
     "https://*/*",

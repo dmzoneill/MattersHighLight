@@ -1,414 +1,459 @@
 // this is the code which will be injected into a given page...
 
-var eodlog = [];
-var pastes = [];
-var pagerDuty = [];
-var salesforce = [];
-var selected = [];
-var customers = [];
+var highlights = [];
+var ignored_events = ["channel_viewed", "channel_viewed", "hello", "status_change", "user_updated"];
+var last_id = "m8mmriwf578hujsnuc1udr1mmo";
 
+var highmonVisible = true;
+var debugmode = false;
 
-function setup() {
-
-	$("a[id=action-link]").click(function () {
-
-		var title = $(this).closest('td').prev('td').text();
-		var customer = $(this).closest('td').prev('td').prev('td').prev('td').text();
-
-		var id = $(this).attr('class');
-		var ticket_id = id.split('-');
-		var sfid = ticket_id[2];
-
-		console.log(title)
-		console.log(customer)
-		console.log(sfid)
-
-		$("#submitForm" + sfid).click(function () {
-			var id = $(this).attr('id');
-			var ticket_id = id.split('m');
-			var sfid = ticket_id[2];
-
-			var comment_made = $("#comment_" + sfid).val();
-			var status_made = $("#status_" + sfid).val();
-			var severity_made = $("#severity_" + sfid).val();
-
-			addToLog("Triaged " + sfid, sfid, [customer, title, comment_made, status_made, severity_made]);
-		});
-
-		addToLog("clicked " + sfid, sfid, [customer, title]);
-	});
-
-	$(".btn-primary").click(function () {
-
-		var title = $(".page-header").find('a:first').text();
-		var customer = $(".page-header").find('div:first').text();
-		var idp = window.location.href.split('/');
-		var sfid = idp[idp.length - 1];
-
-		console.log(title)
-		console.log(customer)
-		console.log(sfid)
-
-		addToLog("Action " + sfid, sfid, [customer, title]);
-	});
-
-	$(".ack-incidents").click(function () {
-
-		$('.ember-checkbox:checkbox:checked').each(function () {
-			var status = $(this).closest('td').next('td').text().trim();
-			var urgency = $(this).closest('td').next('td').next('td').text().trim();
-			var title = $(this).closest('td').next('td').next('td').next('td').text().trim();
-			var create = $(this).closest('td').next('td').next('td').next('td').next('td').text().trim();
-
-			addToPagerDuty("Marked Acknowledged", [status, urgency, title, create]);
-		});
-	});
-
-	$(".resolve-incidents").click(function () {
-
-		$('.ember-checkbox:checkbox:checked').each(function () {
-			var status = $(this).closest('td').next('td').text().trim();
-			var urgency = $(this).closest('td').next('td').next('td').text().trim();
-			var title = $(this).closest('td').next('td').next('td').next('td').text().trim();
-			var create = $(this).closest('td').next('td').next('td').next('td').next('td').text().trim();
-
-			addToPagerDuty("Marked Resolved", [status, urgency, title, create]);
-		});
-	});
-
-	$(".snooze-incidents").click(function () {
-
-		$('.ember-checkbox:checkbox:checked').each(function () {
-			var status = $(this).closest('td').next('td').text().trim();
-			var urgency = $(this).closest('td').next('td').next('td').text().trim();
-			var title = $(this).closest('td').next('td').next('td').next('td').text().trim();
-			var create = $(this).closest('td').next('td').next('td').next('td').next('td').text().trim();
-			addToPagerDuty("Marked Snoozed", [status, urgency, title, create]);
-		});
-	});
-}
-
-function addToLog(message, sfid, additional) {
-	var today = new Date();
-	var dd = String(today.getDate()).padStart(2, '0');
-	var mm = String(today.getMonth() + 1).padStart(2, '0');
-	var yyyy = today.getFullYear();
-
-	var timenow = new Date();
-	var timestr = timenow.getHours() + ":" + timenow.getMinutes()
-
-	today = dd + '/' + mm + '/' + yyyy;
-	var todaylog = { 'date': today, 'time': timestr, 'action': message, 'sfid': sfid };
-
-	if (additional != undefined) {
-		todaylog.extra = additional;
-	}
-
-	eodlog.push(todaylog);
-
-	saveLog();
-}
-
-function addToPagerDuty(message, additional) {
-	var today = new Date();
-	var dd = String(today.getDate()).padStart(2, '0');
-	var mm = String(today.getMonth() + 1).padStart(2, '0');
-	var yyyy = today.getFullYear();
-
-	var timenow = new Date();
-	var timestr = timenow.getHours() + ":" + timenow.getMinutes()
-
-	today = dd + '/' + mm + '/' + yyyy;
-	var todaylog = { 'date': today, 'time': timestr, 'action': message };
-
-	if (additional != undefined) {
-		todaylog.extra = additional;
-	}
-
-	pagerDuty.push(todaylog);
-
-	savePagerDuty();
-}
-
-
-function logPaste(from, url) {
-	pastes.push([from, url]);
-	savePastes();
-}
-
-function logSF(title, url) {
-	salesforce.push([title, url]);
-	saveSF();
-}
-
-
-function saveLog() {
-	var myJSON = JSON.stringify(eodlog);
-
-	console.log(myJSON);
-
-	chrome.storage.local.set({ log: myJSON }, function () {
-		console.log('Value is set to ' + myJSON);
-		printLog();
-	});
-}
-
-function savePastes() {
-	var myJSON = JSON.stringify(pastes);
-
-	chrome.storage.local.set({ pastes: myJSON }, function () {
-		console.log('Value is set to ' + myJSON);
-	});
-}
-
-function loadLog() {
-	console.log("load log");
-	chrome.storage.local.get(['log'], function (result) {
-		console.log(result)
-		if (result.hasOwnProperty("log")) {
-			eodlog = JSON.parse(result.log);
-			printLog();
-		}
-		else {
-			console.log("log was empty");
-		}
-
-		if (window.location.href.indexOf("https://portal.admin.canonical.com/bootstack/cases") != -1) {
-			var title = $(".page-header").find('a:first').text();
-			var customer = $(".page-header").find('div:first').text();
-			var idp = window.location.href.split('/');
-			var sfid = idp[idp.length - 1];
-			if(sfid!=""){
-				addToLog("Reviewed " + sfid, sfid, [customer, title]);
-			}			
-		}
-	});
-}
-
-function loadPagerDuty() {
-	chrome.storage.local.get(['pagerDuty'], function (result) {
-		pagerDuty = JSON.parse(result.pagerDuty);
-		console.log('Value read from log as ' + pagerDuty);
-	});
-}
-
-function savePagerDuty() {
-	var myJSON = JSON.stringify(pagerDuty);
-
-	chrome.storage.local.set({ pagerDuty: myJSON }, function () {
-		console.log('Value is set to ' + myJSON);
-	});
-}
-
-function saveSF() {
-	var myJSON = JSON.stringify(salesforce);
-
-	chrome.storage.local.set({ salesforce: myJSON }, function () {
-		console.log('Value is set to ' + myJSON);
-	});
-}
-
-function loadPastes(title, url) {
-	chrome.storage.local.get(['pastes'], function (result) {
-		if (typeof (result.pastes) === "undefined") {
-			// do nothing
-		}
-		else {
-			pastes = JSON.parse(result.pastes);
-			console.log('Value read from log as ' + pastes);
-		}
-
-		if (title != undefined) {
-			logPaste(title, url);
-		}
-	});
-}
-
-function loadSF(title, url) {
-	chrome.storage.local.get(['salesforce'], function (result) {
-		if (typeof (result.salesforce) === "undefined") {
-			// do nothing
-		}
-		else {
-			salesforce = JSON.parse(result.salesforce);
-			console.log('Value read from log as ' + salesforce);
-		}
-		if (title != undefined) {
-			logSF(title, url);
-		}
-	});
-}
-
-function printLog() {
-	for (i = 0; i < eodlog.length; i++) {
-		console.log(eodlog[i]);
+function debug(msg, override = false) {
+	if (debugmode || override) {
+		console.log(msg);
 	}
 }
 
-function mapCustomerNamesToTicketHeader() {
-	$(".table-condensed > tbody  > tr").each(function() {
-	     var ticketId = $(this).find("th").eq(0).text();
-	     var customer = $(this).find("td").eq(0).text();
-	     console.log(ticketId + " - " + customer);
-             var newheader = $("#triageCase"+ticketId).find("h4").eq(0).html() + " - " + customer;
-	     $("#triageCase"+ticketId).find("h4").eq(0).html(newheader);
-	
-	     if(customer.trim() == "Delta Dental") {
-		$(this).hide();
-             }
-	});
-}
+function addHighlight(eventData, historial) {
+	debug(eventData);
+	var mmobj = JSON.parse(eventData);
 
-function highlightWOO() {
-	$("td.dataCell").each(function() {
-		var text = $(this).text();
-		 
-		if(text.indexOf("Waiting on Operations") != -1) {
-			$(this).closest('tr').css('background-color', '#ffaaa7')
-		}
+	if (ignored_events.indexOf(mmobj.event) > -1) {
+		debug("Ignored event: " + mmobj.event);
+		return false;
+	}
 
-		//if(text.indexOf("Waiting on Customer") != -1) {
-		//	$(this).closest('tr').css('background-color', '#fed8b1')
-		//}
+	var data = mmobj.data;
 
-		if(text.indexOf("Resolved") != -1) {
-			$(this).closest('tr').css('background-color', '#90ee90')
-		}
+	if (!data.hasOwnProperty('post')) {
+		return false;
+	}
 
-		if(text.indexOf("Waiting on Support") != -1) {
-			$(this).closest('tr').css('background-color', '#ffaaa7')
-		}		
-	     
-	});
-}
+	debug(data);
+	var post = JSON.parse(data.post);
 
-function toggleCustomer(t, cust) {
+	debug(data['channel_display_name'])
+	debug("sender = " + data['sender_name'])
+	debug("sender id = " + post['user_id'])
+	debug("message = " + post['message'])
+	debug("create_at = " + post['create_at'])
 
-	if(selected.indexOf(cust) == -1) {
-		selected.push(cust);
-		$("#cust" + t).css(
-			{
-				"display": "inline-block", 
-				"padding": "5px", 
-				"margin":"5px", 
-				"border": "2px solid red", 
-				"background-color": "#88B04B"
+	if (post['id'] == last_id) {
+		return;
+	}
+
+	var found = false;
+	var val = "";
+	var color_msg = post['message'];
+
+	var soundboard = JSON.parse(window.localStorage.getItem('soundboard'));
+
+	debug(soundboard)
+
+	$.each(soundboard, function (key, value) {
+		if (post['message'].toLowerCase().indexOf(key) > -1) {
+			var thecolor = key.indexOf("stop the") > -1 ? "#dd0000" : "#2998fb";
+			color_msg = post['message'].replace(key, "<span style='color:" + thecolor + "'>" + key + "</span>")
+			val = value;
+			found = key;
+
+			if (val[1] == true && (hours < window.localStorage.getItem('hour_min') || hours > window.localStorage.getItem('hour_max'))) {
+				debug(found + " was true, but its outside business hours");
+			} else {
+				if (historial == false && window.localStorage.getItem('cb_sounds') == "true") {
+					playSound(val[0]);
+				}
 			}
-		);
+		}
+	});
+
+	if (found == false) {
+		return;
+	}
+
+	var create_at = new Date(parseInt(post['create_at']));
+	var hours = ('0' + create_at.getHours().toString()).slice(-2);
+	var minutes = ('0' + create_at.getMinutes().toString()).slice(-2);
+	//var seconds = ('0' + create_at.getSeconds().toString()).slice(-2);
+	var dstring = hours + ":" + minutes;
+
+	var channel_display_name = data['channel_display_name'].charAt(0) == '@' ? data['channel_display_name'].substring(1) : data['channel_display_name'];
+	var sender_name = data['sender_name'].charAt(0) == '@' ? data['sender_name'].substring(1) : data['channel_display_name'];
+	//Open Sans", sans-serif
+	var row = "<tr class='highlightRow'>";
+	row += "<td style='padding-left: 10px; padding-right: 20px; width: 70px; white-space: nowrap; padding-top: 4px'><span style='font-size: 9pt; color: #83827e;'>" + dstring + "</span></td>";
+	row += "<td style='padding-left: 20px; font-size: 10pt; width: 120px; white-space: nowrap; padding-top: 4px'>" + channel_display_name + "</td>";
+	row += "<td style='padding-left: 20px; font-size: 10pt; width: 100%; text-alight: left; padding-top: 4px'><b>" + sender_name + ": </b>&nbsp;&nbsp;" + color_msg + "</td>";
+	row += "</tr>";
+
+	var matches = post['message'].match(/(https?:\/\/[^\s]+)/gi);
+	if (matches != null && historial == false) {
+		if (window.localStorage.getItem('cb_xdgopen') == "true") {
+			for (var t = 0; t < matches.length; t++) {
+				debug("opening: " + matches[t]);
+				window.open(matches[t], "_blank");
+			}
+		}
+	}
+
+	if (window.localStorage.getItem('cb_pagerduty') == "true" && historial == false) {
+		debug("=====================================");
+		var matches = post['message'].trim().match(/bs-pd-bot \| [A-Z0-9]{7} TRIGGERED/gi);
+		debug(matches);
+		if (matches != null) {
+			for (var t = 0; t < matches.length; t++) {
+				debug(matches[t]);
+				parts = matches[t].split(/\s+/);
+				debug(parts);
+				$.ajax({
+					type: "PUT",
+					url: "https://api.pagerduty.com/incidents",
+					data: '{"incidents": [{"id": "' + parts[2] + '","type": "incident_reference","status": "acknowledged"}]}',
+					headers: {
+						'Accept': 'application/vnd.pagerduty+json;version=2',
+						'Authorization': 'Token token=' + window.localStorage.getItem('pagerDutyKey').trim(),
+						'Content-Type': 'application/json'
+					},
+					success: function (data) { debug(data); },
+					dataType: "json"
+				});
+			}
+		}
+	}
+
+	$('#highmon_history tbody').append(row);
+	$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
+
+	var rowCount = $('#highmon_history >tbody >tr').length;
+	if (rowCount > 1000) {
+		highlights.shift();
+		$("#highmon_history >tbody >tr:first-child").remove();
+	}
+
+	last_id = post['id'];
+
+	return true;
+}
+
+function playSound(sound) {
+	var myAudio = new Audio(chrome.runtime.getURL(sound));
+	myAudio.volume = 0.1;
+	myAudio.play();
+}
+
+function listenToSocketHighlights() {
+	debug("=======cookie=============");
+	debug(document.cookie);
+	debug("=======cookie=============");
+
+	var exampleSocket = new WebSocket("wss://" + window.location.hostname + "/api/v4/websocket");
+	var token = window.localStorage.getItem('mattersMostToken').trim();
+	exampleSocket.onopen = function (event) {
+		exampleSocket.send("{\"seq\": 1,\"action\": \"authentication_challenge\",\"data\": {\"token\": \"" + token + "\"}}");
+	}
+
+	exampleSocket.onmessage = function (event) {
+		var result = addHighlight(event.data, false);
+		if (result) {
+			highlights.push(event.data);
+			window.localStorage.setItem('highlights', JSON.stringify(highlights));
+		}
+	}
+}
+
+function refreshSwatch() {
+	$("#highmonBody").animate({ height: $("#slider").slider("value") }, 350, function () {
+		$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
+		window.localStorage.setItem('highmonHeight', $("#slider").slider("value"));
+		debug(window.localStorage.getItem('highmonHeight'));
+	});
+}
+
+function save_soundboard() {
+	var new_soundboard = {};
+	$(".highlighRow").each(function (index, element) {
+		var highlight = $(this).children("input:first").val();
+		var audiofile = $(this).children("select").eq(1).val();
+		var businesshours = $(this).children("select:first").val() == "true" ? true : false;
+		new_soundboard[highlight] = [audiofile, businesshours];
+	});
+	debug(new_soundboard);
+	window.localStorage.setItem('soundboard', JSON.stringify(new_soundboard));
+}
+
+function prepareHighLightMonitor() {
+
+	console.log(Object.keys(window));
+
+	var uppic = chrome.runtime.getURL("up.png");
+	var downpic = chrome.runtime.getURL("down.png");
+	var alertpic = chrome.runtime.getURL("alert.png");
+	var settingsic = chrome.runtime.getURL("settings.png");
+
+	var header = "<img style='width: 16px;' src='" + alertpic + "'> <b>Highlight Monitor<b>";
+	header += " <img style='cursor: pointer;' id='highmonToggle' src='" + downpic + "'> ";
+	header += " <input style='margin-left:10px;' type='checkbox' id='cb_pagerduty'> <span style='font-size: 9pt; color: #83827e;'> &nbsp;&nbsp;Pager Duty Acker<span> ";
+	header += " <input style='margin-left:10px;' type='checkbox' id='cb_xdgopen'> <span style='font-size: 9pt; color: #83827e;'> &nbsp;&nbsp;Auto open url<span> ";
+	header += " <input style='margin-left:10px;' type='checkbox' id='cb_sounds'> <span style='font-size: 9pt; color: #83827e;'> &nbsp;&nbsp;Sound notifcations<span> ";
+	header += " <div id='slider' style='margin-left:10px; display: inline-block; width: 80px'></div>";
+	header += " <button style='margin-left:10px;' id='clearAlerts'>Clear Alerts</button>";
+	header += " <img style='margin-left:10px; width: 16px; cursor: pointer;' id='settingsButton' src='" + settingsic + "'> ";
+	header += "<br>";
+	header += "<div id='highMonSettings' style='margin-left:25px; margin-top: 10px'>";
+	header += " Pager Duty Key <input type='text' id='pagerDutyKey' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px; width: 200px'>";
+	header += " MattersMost Token <input type='text' id='mattersMostToken' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px; width: 200px'><br>";
+	header += " <div style='margin-top: 10px; margin-bottom: 10px;'> Business hours <div style='display: inline-block; width:250px; margin-left:20px; margin-right:10px' id='business-hours-range'></div> <span id='hours'/></div>";
+	header += " <span style='display: block; margin-top:10px; font-weight: bold'>Highlights</span> <div id='highlightsTable' style='margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #454545; border-top: 1px solid #454545; padding: 10px'></div>";
+	header += "</div>";
+
+	$("#highmonHeader").html("");
+	$("#highmonHeader").append(header);
+
+	var soundboard = {
+		// highlight, audio file, override, business hours
+		'bs-pd-bot': ['fart6.mp3', true],
+		'dmzoneill': ['fart8.mp3', true],
+		'bsv': ['fart6.mp3', true],
+		'bsavg': ['fart5.mp3', true],
+		'bscvg': ['fart4.mp3', true],
+		'bsteam': ['fart2.mp3', true],
+		'bseng': ['fart2.mp3', true],
+		'bsmgmt': ['fart1.mp3', true],
+		'stop the line': ['flush.mp3', false],
+		'stop the line bootstack': ['flush.mp3', false],
+		'stop the line - bootstack': ['flush.mp3', false],
+		'pastebin.canonical.com': ['facebook.mp3', true],
+		'canonical.my.salesforce.com': ['facebook.mp3', true]
+	}
+
+	if (window.localStorage.getItem('soundboard') != null) {
+		soundboard = JSON.parse(window.localStorage.getItem('soundboard'));
 	} else {
-		selected.splice(selected.indexOf(cust),1);
-		$("#cust" + t).css(
-			{
-				"display": "inline-block", 
-				"padding": "5px", 
-				"margin":"5px", 
-				"border": "1px solid green", 
-				"background-color": "#88B04B"
-			}
-		);
+		window.localStorage.setItem('soundboard', JSON.stringify(soundboard));
 	}
 
-	console.log(selected);
-
-	$('table > tbody  > tr').each(function(i) {
-		var my_td = $(this).children("td");
-		var second_col = my_td.eq(0);
-
-		if(selected.indexOf(second_col.text()) > -1 || selected.length == 0) {
-			$(this).show();
-		} else {
-			$(this).hide();
+	var manifest = chrome.runtime.getManifest();
+	debug(manifest);
+	var war = manifest['web_accessible_resources'];
+	var warmp3 = [];
+	$.each(war, function (key, value) {
+		if (value.toLowerCase().endsWith("mp3")) {
+			warmp3.push(value);
 		}
 	});
+
+	var x = 0;
+	$.each(soundboard, function (key, value) {
+		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
+		row += "Highlight <input type='text' value='" + key + "' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'> ";
+		row += "Restrict to <select style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>";
+		row += "<option value='true' " + (value[1] == true ? "selected='selected'" : "") + ">Business hours</option>";
+		row += "<option value='false' " + (value[1] == false ? "selected='selected'" : "") + ">Anytime</option></select>";
+
+		var select = "<select style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>";
+		$.each(warmp3, function (key, val) {
+			select += "<option value='" + val + "' " + (value[0] == val ? "selected='selected'" : "") + ">" + val + "</option>";
+		});
+		select += "</select>";
+
+		row += "Sound " + select;
+		row += "<button style='margin-right:10px; margin-left:0px; font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='playAudioItem'>";
+		row += "<img style='width:16px' src='" + chrome.runtime.getURL("play.png") + "'";
+		row += "</button>";
+		row += "</div>";
+		$("#highlightsTable").append(row);
+		x++;
+	});
+
+	$(".highlighItem").change(function () {
+		save_soundboard();
+	});
+
+	$(".playAudioItem").click(function () {
+		var parent = $(this).parent();
+		var audiofile = $(parent).children("select").eq(1).val();
+		var myAudio = new Audio(chrome.runtime.getURL(audiofile));
+		myAudio.volume = 0.2;
+		myAudio.play();
+	});
+
+	$("#highmonToggle").click(function () {
+		if (highmonVisible) {
+			$("#slider").hide();
+			$("#highmonBody").hide();
+			$("#highmonToggle").attr('src', uppic);
+		} else {
+			$("#slider").show();
+			$("#highmonBody").show();
+			$("#highmonToggle").attr('src', downpic);
+		}
+		highmonVisible = !highmonVisible;
+	});
+
+	$("#mattersMostToken").change(function () {
+		window.localStorage.setItem('mattersMostToken', $("#mattersMostToken").val());
+	});
+
+	$("#pagerDutyKey").change(function () {
+		window.localStorage.setItem('pagerDutyKey', $("#pagerDutyKey").val());
+	});
+
+	$("#clearAlerts").click(function () {
+		highlights = [];
+		$("#highmon_history > tbody").html("");
+		window.localStorage.setItem('highlights', JSON.stringify(highlights));
+	});
+
+	// pagerduty
+	if (window.localStorage.getItem('cb_pagerduty') != null) {
+		if (window.localStorage.getItem('cb_pagerduty') == "true") {
+			$("#cb_pagerduty").attr("checked", "checked");
+		}
+	}
+	$('#cb_pagerduty').change(function () {
+		window.localStorage.setItem('cb_pagerduty', $(this).is(":checked"));
+	});
+
+	// sounds
+	if (window.localStorage.getItem('cb_sounds') != null) {
+		if (window.localStorage.getItem('cb_sounds') == "true") {
+			$("#cb_sounds").attr("checked", "checked");
+		}
+	}
+	$('#cb_sounds').change(function () {
+		window.localStorage.setItem('cb_sounds', $(this).is(":checked"));
+	});
+
+	// xdg open
+	if (window.localStorage.getItem('cb_xdgopen') != null) {
+		if (window.localStorage.getItem('cb_xdgopen') == "true") {
+			$("#cb_xdgopen").attr("checked", "checked");
+		}
+	}
+	$('#cb_xdgopen').change(function () {
+		window.localStorage.setItem('cb_xdgopen', $(this).is(":checked"));
+	});
+
+
+	// busness hours
+	var hour_min = 9;
+	var hour_max = 17;
+	if (window.localStorage.getItem('hour_min') != null) {
+		hour_min = window.localStorage.getItem('hour_min');
+	} else {
+		window.localStorage.setItem('hour_min', hour_min);
+	}
+	if (window.localStorage.getItem('hour_max') != null) {
+		hour_max = window.localStorage.getItem('hour_max');
+	} else {
+		window.localStorage.setItem('hour_max', hour_max);
+	}
+
+	$("#hours").html(hour_min + " - " + hour_max);
+	
+	$("#business-hours-range").slider({
+		range: true,
+		min: 0,
+		max: 23,
+		values: [ hour_min, hour_max ],
+		slide: function( event, ui ) {
+			window.localStorage.setItem('hour_min', ui.values[0]);
+			window.localStorage.setItem('hour_max', ui.values[1]);
+			$("#hours").html(ui.values[0] + " - " + ui.values[1]);
+		}
+	});
+
+	$("#highMonSettings").toggle();
+
+	$("#settingsButton").click(function () {
+		$("#highMonSettings").toggle();
+	});
+
+	if (window.localStorage.getItem('mattersMostToken') != null) {
+		$("#mattersMostToken").val(window.localStorage.getItem('mattersMostToken'));
+	}
+
+	if (window.localStorage.getItem('pagerDutyKey') != null) {
+		$("#pagerDutyKey").val(window.localStorage.getItem('pagerDutyKey'));
+	}
+
+	var table = "<table id='highmon_history' style='margin-top:10px; width: 100%;'>";
+	table += "<thead>";
+	table += "<tr>";
+	table += "<th style='padding-left: 10px; margin-right: 20px; font-size: 10pt; width: 70px; white-space: nowrap;'>Time</th>";
+	table += "<th style='padding-left: 20px; margin-right: 20px; font-size: 10pt; white-space: nowrap;'>Channel</th>";
+	table += "<th style='padding-left: 20px; font-size: 10pt; width: 100%; text-alight: left'>Message</th>";
+	table += "</tr>";
+	table += "</thead>";
+	table += "<tbody>";
+	table += "</tbody>";
+	table += "</table>";
+
+	var sheight = window.localStorage.getItem('highmonHeight');
+	debug(sheight);
+	sheight = sheight == null ? 400 : parseInt(sheight);
+
+	$("#highmonBody").html("");
+	$("#highmonBody").append(table);
+	$("#slider").slider({
+		orientation: "horizontal",
+		range: "min",
+		min: 150,
+		max: 1000,
+		value: sheight,
+		change: refreshSwatch
+	});
+
+	$("#highmonBody").css('height', sheight);
+
+	if (highlights.length > 0) {
+		for (var x = 0; x < highlights.length; x++) {
+			addHighlight(highlights[x], true);
+		}
+	}
+
+	listenToSocketHighlights();
+
+	debug("high monitor");
 }
 
-
-function addCaseFilters() {	
-	customers = []
-
-	$('table > tbody  > tr').each(function(i) {
-		var $this = $(this);
-		var my_td = $this.children("td");
-		var second_col = my_td.eq(0);
-		//var third_col = my_td.eq(2);
-		if(customers.indexOf(second_col.text()) == -1) {
-			if(second_col.text().trim() == "") return;
-			customers.push(second_col.text());
-		}
-	});
-
-	customers.sort(); 
-
-	if($(".customer-filter").length) {
-
+function addHighLightMonitor() {
+	if ($("#highmonHeader").length) {
+		prepareHighLightMonitor();
 	}
 	else {
-		$("<div class=\"customer-filter\"></div>").insertAfter($(".page-header"))
-
-		for(var t=0; t < customers.length; t++) {
-			$(".customer-filter").append("<div class='customerspan' id='cust" + t + "'><a id='custlink" + t + "' style='color:#FFFFFF'>" + customers[t] + "</a></div>");
-			$("#custlink" + t).click(function(){
-				toggleCustomer($(this).attr('id').substring(8), $(this).text());
-			});
-		}
-		$(".customerspan").css(
-			{
-				"display": "inline-block", 
-				"padding": "5px", 
-				"margin":"5px", 
-				"border": "1px solid green", 
-				"background-color": "#88B04B"
-			}
-		);
+		$("#app-content").prepend("<div id='highmonBody' style='padding: 10px 10px 10px 15px; overflow-y: scroll; overflow-x: hidden;'/>");
+		$("#app-content").prepend("<div id='highmonHeader' style='border-bottom: 1px solid #454545; padding: 10px 10px 10px 15px;'/>");
+		prepareHighLightMonitor();
 	}
 }
 
+var waitForEl = function (selector, callback) {
+	if (jQuery(selector).length) {
+		callback();
+	} else {
+		setTimeout(function () {
+			waitForEl(selector, callback);
+		}, 100);
+	}
+};
 
 
-(function () {
-
-	if (window.location.href.indexOf("https://portal.admin.canonical.com/incident/event") != -1) {
-		var ele = document.getElementById("review-approve-event").style.display;
-		if (ele == "none") {
-			console.log("already approved, end of queue or direct linked");
-			return;
+$(document).ready(function () {
+	var m = $("meta[name=application-name]");
+	var applicationname = m.attr("content");
+	if(applicationname == "Mattermost") {
+		try {
+			highlights = JSON.parse(window.localStorage.getItem('highlights'));
+			if (highlights == null) {
+				highlights = [];
+			}
+		}
+		catch (err) {
+			highlights = [];
 		}
 
-		document.getElementById("review-approve-event").click();
-		document.location.href = document.getElementById("next-review-event").getAttribute('href');
-		console.log("clicked");
+		waitForEl("#app-content", function () {
+			addHighLightMonitor();
+		});
 	}
-
-	if (window.location.href.indexOf("https://portal.admin.canonical.com/bootstack/triage/") != -1) {
-		loadLog();
-		setup();
-		mapCustomerNamesToTicketHeader();
-	}
-
-	if (window.location.href.indexOf("https://portal.admin.canonical.com/bootstack/cases") != -1) {
-		loadLog();
-		setup();
-	}
-
-	if (window.location.href.indexOf("https://pastebin.canonical.com/p/") != -1) {
-		loadPastes($("h1:eq( 1 )").text(), window.location.href);
-	}
-
-	if (window.location.href.indexOf("https://canonical.pagerduty.com/incident") != -1) {
-		loadPagerDuty();
-		setup();
-	}
-
-	if (window.location.href.indexOf("https://canonical.my.salesforce.com/") != -1) {
-		//setup();
-		var parts = window.location.href.split('/');
-		if (parts.length == 4) {
-			loadSF($(".efhpTitle").text(), window.location.href);
-		}
-		highlightWOO()
-	}
-
-	if (window.location.href.indexOf("https://portal.admin.canonical.com/bootstack/cases/") != -1) {
-		addCaseFilters();	
-	}	
-})();
+});
