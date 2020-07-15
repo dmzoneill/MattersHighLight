@@ -44,7 +44,6 @@ Prep the icon, serpate binary and copy the desktop file into place
 sudo cp /opt/google/chrome/google-chrome /opt/google/chrome/mattersmost
 sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.png
 cp HighMonMattersMost.desktop  ~/.local/share/applications/
-
 ```
 
 <br>
