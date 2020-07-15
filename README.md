@@ -18,6 +18,32 @@ In order to workaround policy restrictions on background sounds you need to laun
 ```
 /opt/google/chrome/chrome --autoplay-policy=no-user-gesture-required --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio,MediaEngagementBypassAutoplayPolicies
 ```
+
+<br>
+Creating a serpate window with matters most icon
+```
+cat HighMonMattersMost.desktop 
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=/opt/google/chrome/mattersmost --autoplay-policy=no-user-gesture-required --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio,MediaEngagementBypassAutoplayPolicies --new-window --app=https://chat.canonical.com --user-data-dir="/home/dmzoneill/src/bsMMhighmon/userdir" --class="Chr2"
+Name=Highmon MattersMost
+Icon=/opt/Mattermost/mm.png
+StartupWMClass=Chr2
+StartupNotify=true
+Categories=Network;WebBrowser;
+```
+
+<br>
+```
+sudo cp /opt/google/chrome/google-chrome /opt/google/chrome/mattersmost
+sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.png
+cp HighMonMattersMost.desktop  ~/.local/share/applications/
+
+```
+
 <br>
 go to:
 
