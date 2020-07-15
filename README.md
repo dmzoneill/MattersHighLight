@@ -7,7 +7,9 @@ git clone https://github.com/dmzoneill/MattersHighLight.git
 cd MattersHighLight
 mkdir userdir
 ```
+
 <br>
+
 Modify manifest.json (to provide your own sounds) if you wish:
 
 ```
@@ -24,6 +26,7 @@ sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.pn
 ```
 
 <br>
+
 Creating a seperate window with matters most icon
 
 ```
@@ -50,13 +53,16 @@ cp HighMonMattersMost.desktop  ~/.local/share/applications/
 ```
 
 <br>
+
 To install the extension, the first time you need to run it without "--app=https://chat.yourhost.com"
 go to:
 
 ```
 extensions > load plugin > select to plugin folder
 ```
+
 <br>
+
 Visit your matters most website:
 
 ```
