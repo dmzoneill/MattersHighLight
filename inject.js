@@ -202,7 +202,11 @@ function prepareHighLightMonitor() {
 	header += " Pager Duty Key <input type='text' id='pagerDutyKey' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px; width: 200px'>";
 	header += " MattersMost Token <input type='text' id='mattersMostToken' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px; width: 200px'><br>";
 	header += " <div style='margin-top: 10px; margin-bottom: 10px;'> Business hours <div style='display: inline-block; width:250px; margin-left:20px; margin-right:10px' id='business-hours-range'></div> <span id='hours'/></div>";
-	header += " <span style='display: block; margin-top:10px; font-weight: bold'>Highlights</span> <div id='highlightsTable' style='margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #454545; border-top: 1px solid #454545; padding: 10px'></div>";
+	header += " <span style='display: inline-block; margin-top:0px; font-weight: bold'>Highlights</span>";
+	header += "<button style='margin-left:0px; margin-top:0px; font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='addItem'>";
+	header += "<img style='width:16px' src='" + chrome.runtime.getURL("add.png") + "'>";
+	header += "</button>";
+	header += "<div id='highlightsTable' style='margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #454545; border-top: 1px solid #454545; padding: 10px'></div>";
 	header += "</div>";
 
 	$("#highmonHeader").html("");
@@ -256,24 +260,82 @@ function prepareHighLightMonitor() {
 		select += "</select>";
 
 		row += "Sound " + select;
-		row += "<button style='margin-right:10px; margin-left:0px; font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='playAudioItem'>";
+		row += "<button style='margin-left:0px; font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='playAudioItem'>";
 		row += "<img style='width:16px' src='" + chrome.runtime.getURL("play.png") + "'";
+		row += "</button>";
+		row += "<button style='margin-left:0px; font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='deleteItem'>";
+		row += "<img style='width:16px' src='" + chrome.runtime.getURL("delete.png") + "'";
 		row += "</button>";
 		row += "</div>";
 		$("#highlightsTable").append(row);
 		x++;
 	});
 
+	/*
 	$(".highlighItem").change(function () {
 		save_soundboard();
 	});
+	*/
 
+	$('body').on('change', '.highlighItem', function() {
+		save_soundboard();
+	});
+
+	/*
 	$(".playAudioItem").click(function () {
 		var parent = $(this).parent();
 		var audiofile = $(parent).children("select").eq(1).val();
 		var myAudio = new Audio(chrome.runtime.getURL(audiofile));
 		myAudio.volume = 0.2;
 		myAudio.play();
+	});
+	*/
+
+	$('body').on('click', 'button.playAudioItem', function() {
+		var parent = $(this).parent();
+		var audiofile = $(parent).children("select").eq(1).val();
+		var myAudio = new Audio(chrome.runtime.getURL(audiofile));
+		myAudio.volume = 0.2;
+		myAudio.play();
+	});
+
+	/*
+	$(".deleteItem").click(function () {
+		var parent = $(this).parent();
+		$(parent).remove();
+		save_soundboard();		
+	});
+	*/
+
+	$('body').on('click', 'button.deleteItem', function() {
+		var parent = $(this).parent();
+		$(parent).remove();
+		save_soundboard();	
+	});
+
+	$(".addItem").click(function () {
+		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
+		row += "Highlight <input type='text' value='[A-Za-z0-9]*whatever' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'> ";
+		row += "Restrict to <select style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>";
+		row += "<option value='true'>Business hours</option>";
+		row += "<option value='false'>Anytime</option></select>";
+
+		var select = "<select style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>";
+		$.each(warmp3, function (key, val) {
+			select += "<option value='" + val + "'>" + val + "</option>";
+		});
+		select += "</select>";
+
+		row += "Sound " + select;
+		row += "<button style='font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='playAudioItem'>";
+		row += "<img style='width:16px' src='" + chrome.runtime.getURL("play.png") + "'";
+		row += "</button>";
+		row += "<button style='font-size: 8pt; font-weight: bold; border: 0px; height:20px; background-color: transparent;' class='deleteItem'>";
+		row += "<img style='width:16px' src='" + chrome.runtime.getURL("delete.png") + "'";
+		row += "</button>";
+		row += "</div>";
+		$("#highlightsTable").append(row);	
+		save_soundboard();	
 	});
 
 	$("#highmonToggle").click(function () {
