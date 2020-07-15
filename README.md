@@ -20,7 +20,8 @@ In order to workaround policy restrictions on background sounds you need to laun
 ```
 
 <br>
-Creating a serpate window with matters most icon
+Creating a seperate window with matters most icon
+
 ```
 cat HighMonMattersMost.desktop 
 [Desktop Entry]
