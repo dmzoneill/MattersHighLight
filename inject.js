@@ -47,10 +47,13 @@ function addHighlight(eventData, historial) {
 
 	var soundboard = JSON.parse(window.localStorage.getItem('soundboard'));
 
-	debug(soundboard)
+	debug(soundboard);
 
 	$.each(soundboard, function (key, value) {
-		if (post['message'].toLowerCase().indexOf(key) > -1) {
+		var re = new RegExp(key, 'gi');
+		var matches = post['message'].match(re);
+		if (matches != null) {
+			debug(matches, true);
 			var thecolor = key.indexOf("stop the") > -1 ? "#dd0000" : "#2998fb";
 			color_msg = post['message'].replace(key, "<span style='color:" + thecolor + "'>" + key + "</span>")
 			val = value;
