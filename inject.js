@@ -210,7 +210,7 @@ function prepareHighLightMonitor() {
 
 	var soundboard = {
 		// highlight, audio file, override, business hours
-		'triggered': ['fart6.mp3', true],
+		'[A-Z0-9]{7} TRIGGERED': ['fart6.mp3', true],
 		'dmzoneill': ['fart8.mp3', true],
 		'bsv': ['fart6.mp3', true],
 		'bsavg': ['fart5.mp3', true],
