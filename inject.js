@@ -97,7 +97,7 @@ function addHighlight(eventData, historial) {
 
 	if (window.localStorage.getItem('cb_pagerduty') == "true" && historial == false) {
 		debug("=====================================");
-		var matches = post['message'].trim().match(/bs-pd-bot \| [A-Z0-9]{7} TRIGGERED/gi);
+		var matches = post['message'].trim().match(/[A-Z0-9]{7} TRIGGERED/gi);
 		debug(matches);
 		if (matches != null) {
 			for (var t = 0; t < matches.length; t++) {
@@ -181,9 +181,6 @@ function save_soundboard() {
 }
 
 function prepareHighLightMonitor() {
-
-	console.log(Object.keys(window));
-
 	var uppic = chrome.runtime.getURL("up.png");
 	var downpic = chrome.runtime.getURL("down.png");
 	var alertpic = chrome.runtime.getURL("alert.png");
@@ -210,7 +207,7 @@ function prepareHighLightMonitor() {
 
 	var soundboard = {
 		// highlight, audio file, override, business hours
-		'bs-pd-bot': ['fart6.mp3', true],
+		'triggered': ['fart6.mp3', true],
 		'dmzoneill': ['fart8.mp3', true],
 		'bsv': ['fart6.mp3', true],
 		'bsavg': ['fart5.mp3', true],
