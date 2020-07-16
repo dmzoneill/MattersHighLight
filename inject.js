@@ -189,7 +189,7 @@ function refreshSwatch() {
 function save_soundboard() {
 	var new_soundboard = {};
 	$(".highlighRow").each(function (index, element) {
-		var highlight = $(this).children("input:first").val();
+		var highlight = $(this).children("div:first").children("input:first").val();
 		var audiofile = $(this).children("select").eq(1).val();
 		var businesshours = $(this).children("select:first").val() == "true" ? true : false;
 		new_soundboard[highlight] = [audiofile, businesshours];
@@ -266,9 +266,9 @@ function prepareHighLightMonitor() {
 		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
 
 		row += "Highlight<div style='margin-right: 10px; margin-left: 10px; padding: 2px; background-color: #FFFFFF; border-radius: 3px 3px; width: 250px; display:inline-block;'>";
-		row += "<span sstyle='width: 5px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'> &nbsp;/</span>";
+		row += "<span style='width: 10px; padding 0px; margin-left: 5px; margin: 0px; align: center; text-align: center; display:inline-block;'>/</span>";
 		row += "<input type='text' value='" + key + "' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px' class='highlighItem'>";
-		row += "<span style='width: 4px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
+		row += "<span style='width: 10px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
 		row += "</div>";
 
 		//row += "Highlight /<input type='text' value='" + key + "' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>/gi ";
@@ -315,9 +315,9 @@ function prepareHighLightMonitor() {
 	$(".addItem").click(function () {
 		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
 		row += "Highlight<div style='margin-right: 10px; margin-left: 10px; padding: 2px; background-color: #FFFFFF; border-radius: 3px 3px; width: 250px; display:inline-block;'>";
-		row += "<span sstyle='width: 5px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'> &nbsp;/</span>";
+		row += "<span style='width: 10px; padding 0px; margin: 0px; margin-left: 5px; align: center; text-align: center; display:inline-block;'>/</span>";
 		row += "<input type='text' value='[A-Za-z0-9]*whatever' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px' class='highlighItem'>";
-		row += "<span style='width: 4px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
+		row += "<span style='width: 10px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
 		row += "</div>";
 
 		//row += "Highlight /<input type='text' value='[A-Za-z0-9]*whatever' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>/gi ";
