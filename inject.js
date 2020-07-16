@@ -215,8 +215,8 @@ function prepareHighLightMonitor() {
 	$("#highmonHeader").append(header);
 
 	var soundboard = {
-		// highlight, audio file, override, business hours
-		'[A-Z0-9]{7} TRIGGERED': ['fart6.mp3', true],
+		// highlight, audio file, business hours
+		'[A-Z0-9]{7} \*\*TRIGGERED\*\*': ['fart6.mp3', true],
 		'dmzoneill': ['fart8.mp3', true],
 		'bsv': ['fart6.mp3', true],
 		'bsavg': ['fart5.mp3', true],
