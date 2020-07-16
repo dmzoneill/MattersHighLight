@@ -94,8 +94,12 @@ function addHighlight(eventData, historial) {
 	if (matches != null && historial == false) {
 		if (window.localStorage.getItem('cb_xdgopen') == "true") {
 			for (var t = 0; t < matches.length; t++) {
-				debug("opening: " + matches[t]);
-				window.open(matches[t], "_blank");
+				var thematch = matches[t];
+				if(thematch.endsWith(")")) {
+					thematch = thematch.substring(0, str.length - 1);
+				}
+				debug("opening: " + thematch);
+				window.open(thematch, "_blank");
 			}
 		}
 	}
