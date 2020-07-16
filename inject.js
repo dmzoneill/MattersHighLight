@@ -267,7 +267,7 @@ function prepareHighLightMonitor() {
 
 		row += "Highlight<div style='margin-right: 10px; margin-left: 10px; padding: 2px; background-color: #FFFFFF; border-radius: 3px 3px; width: 250px; display:inline-block;'>";
 		row += "<span sstyle='width: 5px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'> &nbsp;/</span>";
-		row += "<input type='text' value='" + key + "' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px'>";
+		row += "<input type='text' value='" + key + "' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px' class='highlighItem'>";
 		row += "<span style='width: 4px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
 		row += "</div>";
 
@@ -316,7 +316,7 @@ function prepareHighLightMonitor() {
 		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
 		row += "Highlight<div style='margin-right: 10px; margin-left: 10px; padding: 2px; background-color: #FFFFFF; border-radius: 3px 3px; width: 250px; display:inline-block;'>";
 		row += "<span sstyle='width: 5px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'> &nbsp;/</span>";
-		row += "<input type='text' value='[A-Za-z0-9]*whatever' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px'>";
+		row += "<input type='text' value='[A-Za-z0-9]*whatever' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px' class='highlighItem'>";
 		row += "<span style='width: 4px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
 		row += "</div>";
 
