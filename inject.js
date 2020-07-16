@@ -93,16 +93,21 @@ function addHighlight(eventData, historial) {
 	var matches = post['message'].match(/(https?:\/\/[^\s]+)/gi);
 	if (matches != null && historial == false) {
 		if (window.localStorage.getItem('cb_xdgopen') == "true") {
+			var last = "";
 			for (var t = 0; t < matches.length; t++) {
 				var thematch = matches[t];
 				if(thematch.endsWith(")")) {
-					thematch = thematch.substring(0, str.length - 1);
+					thematch = thematch.substring(0, thematch.length - 1);
 				}
 				if(thematch.endsWith("):")) {
-					thematch = thematch.substring(0, str.length - 2);
+					thematch = thematch.substring(0, thematch.length - 2);
 				}
-				debug("opening: " + thematch);
-				window.open(thematch, "_blank");
+				if(thematch != last) {
+					// prevent duplicate openings
+					debug("opening: " + thematch);
+					window.open(thematch, "_blank");
+					last = thematch;
+				}
 			}
 		}
 	}
