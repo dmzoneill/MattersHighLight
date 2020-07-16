@@ -49,11 +49,12 @@ function addHighlight(eventData, historial) {
 
 	debug(soundboard);
 
+	debug(data, true);
+
 	$.each(soundboard, function (key, value) {
 		var re = new RegExp(key, 'gi');
 		var matches = post['message'].match(re);
 		if (matches != null) {
-			debug(matches, true);
 			var thecolor = key.indexOf("stop the") > -1 ? "#dd0000" : "#2998fb";
 			color_msg = post['message'].replace(key, "<span style='color:" + thecolor + "'>" + key + "</span>")
 			val = value;
@@ -150,6 +151,7 @@ function listenToSocketHighlights() {
 
 	var exampleSocket = new WebSocket("wss://" + window.location.hostname + "/api/v4/websocket");
 	var token = window.localStorage.getItem('mattersMostToken').trim();
+
 	exampleSocket.onopen = function (event) {
 		exampleSocket.send("{\"seq\": 1,\"action\": \"authentication_challenge\",\"data\": {\"token\": \"" + token + "\"}}");
 	}
@@ -248,7 +250,14 @@ function prepareHighLightMonitor() {
 	var x = 0;
 	$.each(soundboard, function (key, value) {
 		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
-		row += "Highlight <input type='text' value='" + key + "' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'> ";
+
+		row += "Highlight<div style='margin-right: 10px; margin-left: 10px; padding: 2px; background-color: #FFFFFF; border-radius: 3px 3px; width: 250px; display:inline-block;'>";
+		row += "<span sstyle='width: 5px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'> &nbsp;/</span>";
+		row += "<input type='text' value='" + key + "' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px'>";
+		row += "<span style='width: 4px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
+		row += "</div>";
+
+		//row += "Highlight /<input type='text' value='" + key + "' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>/gi ";
 		row += "Restrict to <select style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>";
 		row += "<option value='true' " + (value[1] == true ? "selected='selected'" : "") + ">Business hours</option>";
 		row += "<option value='false' " + (value[1] == false ? "selected='selected'" : "") + ">Anytime</option></select>";
@@ -271,25 +280,9 @@ function prepareHighLightMonitor() {
 		x++;
 	});
 
-	/*
-	$(".highlighItem").change(function () {
-		save_soundboard();
-	});
-	*/
-
 	$('body').on('change', '.highlighItem', function() {
 		save_soundboard();
 	});
-
-	/*
-	$(".playAudioItem").click(function () {
-		var parent = $(this).parent();
-		var audiofile = $(parent).children("select").eq(1).val();
-		var myAudio = new Audio(chrome.runtime.getURL(audiofile));
-		myAudio.volume = 0.2;
-		myAudio.play();
-	});
-	*/
 
 	$('body').on('click', 'button.playAudioItem', function() {
 		var parent = $(this).parent();
@@ -299,14 +292,6 @@ function prepareHighLightMonitor() {
 		myAudio.play();
 	});
 
-	/*
-	$(".deleteItem").click(function () {
-		var parent = $(this).parent();
-		$(parent).remove();
-		save_soundboard();		
-	});
-	*/
-
 	$('body').on('click', 'button.deleteItem', function() {
 		var parent = $(this).parent();
 		$(parent).remove();
@@ -315,7 +300,13 @@ function prepareHighLightMonitor() {
 
 	$(".addItem").click(function () {
 		var row = "<div style='margin-bottom: 4px' class='highlighRow'>";
-		row += "Highlight <input type='text' value='[A-Za-z0-9]*whatever' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'> ";
+		row += "Highlight<div style='margin-right: 10px; margin-left: 10px; padding: 2px; background-color: #FFFFFF; border-radius: 3px 3px; width: 250px; display:inline-block;'>";
+		row += "<span sstyle='width: 5px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'> &nbsp;/</span>";
+		row += "<input type='text' value='[A-Za-z0-9]*whatever' style='border: 0px; outline: none; width:220px; font-size: 9pt; height: 14px'>";
+		row += "<span style='width: 4px; padding 0px; margin: 0px; align: center; text-align: center; display:inline-block;'>/gi</span>";
+		row += "</div>";
+
+		//row += "Highlight /<input type='text' value='[A-Za-z0-9]*whatever' style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>/gi ";
 		row += "Restrict to <select style='margin-right:10px; margin-left:10px; font-size: 9pt; height:20px' class='highlighItem'>";
 		row += "<option value='true'>Business hours</option>";
 		row += "<option value='false'>Anytime</option></select>";
