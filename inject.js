@@ -98,6 +98,9 @@ function addHighlight(eventData, historial) {
 				if(thematch.endsWith(")")) {
 					thematch = thematch.substring(0, str.length - 1);
 				}
+				if(thematch.endsWith("):")) {
+					thematch = thematch.substring(0, str.length - 2);
+				}
 				debug("opening: " + thematch);
 				window.open(thematch, "_blank");
 			}
