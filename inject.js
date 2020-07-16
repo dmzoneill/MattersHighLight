@@ -52,7 +52,8 @@ function addHighlight(eventData, historial) {
 	debug(data, true);
 
 	$.each(soundboard, function (key, value) {
-		var re = new RegExp(key, 'gi');
+		var escapedBoldMarkdown = key.replace(/\*\*/g, '\\*\\*');
+		var re = new RegExp(escapedBoldMarkdown, 'gi');
 		var matches = post['message'].match(re);
 		if (matches != null) {
 			var thecolor = key.indexOf("stop the") > -1 ? "#dd0000" : "#2998fb";
@@ -101,7 +102,7 @@ function addHighlight(eventData, historial) {
 
 	if (window.localStorage.getItem('cb_pagerduty') == "true" && historial == false) {
 		debug("=====================================");
-		var matches = post['message'].trim().match(/[A-Z0-9]{7} TRIGGERED/gi);
+		var matches = post['message'].trim().match(/[A-Z0-9]{7} \*\*TRIGGERED\*\*/gi);
 		debug(matches);
 		if (matches != null) {
 			for (var t = 0; t < matches.length; t++) {
@@ -209,6 +210,7 @@ function prepareHighLightMonitor() {
 	header += "<img style='width:16px' src='" + chrome.runtime.getURL("add.png") + "'>";
 	header += "</button>";
 	header += "<div id='highlightsTable' style='margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #454545; border-top: 1px solid #454545; padding: 10px'></div>";
+	header += "<div style='padding: 10px'>1) Input is treated as regex.<br>2) ** will be replaced by \\*\\*<br>3) * is normal the normal 0 1 or many multiplier</div>";
 	header += "</div>";
 
 	$("#highmonHeader").html("");
