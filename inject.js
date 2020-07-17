@@ -124,7 +124,7 @@ function addHighlight(eventData, historial) {
 				$.ajax({
 					type: "PUT",
 					url: "https://api.pagerduty.com/incidents",
-					data: '{"incidents": [{"id": "' + parts[2] + '","type": "incident_reference","status": "acknowledged"}]}',
+					data: '{"incidents": [{"id": "' + parts[0] + '","type": "incident_reference","status": "acknowledged"}]}',
 					headers: {
 						'Accept': 'application/vnd.pagerduty+json;version=2',
 						'Authorization': 'Token token=' + window.localStorage.getItem('pagerDutyKey').trim(),
@@ -176,6 +176,16 @@ function listenToSocketHighlights() {
 			window.localStorage.setItem('highlights', JSON.stringify(highlights));
 		}
 	}
+
+	exampleSocket.onclose = function(event) {
+		debug('onclose: ' + event.code, true)
+		debug('onclose: ' + event.reason, true)
+		debug('onclose: ' + event.wasClean, true)
+	};
+
+	exampleSocket.onerror = function(event) {
+		debug('onerror: ' + event.error, true)
+	};
 }
 
 function refreshSwatch() {
