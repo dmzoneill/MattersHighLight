@@ -504,6 +504,51 @@ function addHighLightMonitor() {
 	}
 }
 
+function compactMenu() {
+	$(".sidebar-item").each(function() {
+		$( this ).css("padding-left", "10px");
+		$( this ).css("padding-top", "2px");
+		$( this ).css("padding-bottom", "2px");
+	});
+
+	$(".nav-stacked li").each(function() {
+		$( this ).css("padding-left", "10px");
+		$( this ).css("padding-top", "2px");
+		$( this ).css("padding-bottom", "2px");
+	});	
+
+	$(".nav-stacked li a").each(function() {
+		$( this ).css("padding-left", "10px");
+		$( this ).css("padding-top", "2px");
+		$( this ).css("padding-bottom", "2px");
+	});	
+
+	$(".nav-stacked span").each(function() {
+		$( this ).css("padding", "0px");
+		$( this ).css("line-height", "12px");
+	});
+	
+	$(".nav-stacked span").each(function() {
+		$( this ).css("padding", "0px");
+		$( this ).css("line-height", "12px");
+	});
+	
+	$( ".icon icon__globe svg" ).each(function() {
+		$( this ).width(9);
+		$( this ).height(9);
+	});
+
+	$( "span.status > svg" ).each(function() {
+		$( this ).width(9);
+		$( this ).height(9);
+	});
+	
+	$( ".sidebar-item__name span" ).each(function() {
+		$( this ).css("font-size", "12px");
+	});
+}
+
+
 var waitForEl = function (selector, callback) {
 	if (jQuery(selector).length) {
 		callback();
@@ -531,6 +576,7 @@ $(document).ready(function () {
 
 		waitForEl("#app-content", function () {
 			addHighLightMonitor();
+			compactMenu();
 		});
 	}
 });
