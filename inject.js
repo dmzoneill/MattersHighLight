@@ -513,8 +513,8 @@ function compactMenu() {
 
 	$(".nav-stacked li").each(function() {
 		$( this ).css("padding-left", "10px");
-		$( this ).css("padding-top", "2px");
-		$( this ).css("padding-bottom", "2px");
+		$( this ).css("padding-top", "0px");
+		$( this ).css("padding-bottom", "0px");
 	});	
 
 	$(".nav-stacked li a").each(function() {
@@ -546,6 +546,18 @@ function compactMenu() {
 	$( ".sidebar-item__name span" ).each(function() {
 		$( this ).css("font-size", "12px");
 	});
+
+	$( "span.sidebar-item__name > span" ).each(function() {
+		debug($(this).html());
+		$( this ).css("font-size", "12px");
+		$( this ).css("line-height", "12px");
+	});
+
+	$(".sidebar-section__header").css("margin-top", "0px");
+
+	$(".btn-close").css("height", "14px");
+	$(".btn-close").css("width", "14px");
+	$(".btn-close").css("font-size", "14pt");
 }
 
 
@@ -561,6 +573,7 @@ var waitForEl = function (selector, callback) {
 
 
 $(document).ready(function () {
+	ElementQueries.init();
 	var m = $("meta[name=application-name]");
 	var applicationname = m.attr("content");
 	if(applicationname == "Mattermost") {
@@ -577,6 +590,21 @@ $(document).ready(function () {
 		waitForEl("#app-content", function () {
 			addHighLightMonitor();
 			compactMenu();
+			setInterval(function(){ compactMenu(); }, 10000);
+
+			$('.sidebar-right-container').bind('DOMSubtreeModified', function(){
+				if($('.sidebar-right-container').html().length == 0){
+					$("#highmonBody").css("width", "100%");
+					$("#channel-header").css("width", "100%");
+				}
+				else {
+					$("#highmonBody").css("width", $(".post-list__dynamic").width());
+					$("#channel-header").css("width", $(".post-list__dynamic").width());
+				}
+				console.log('changed');
+				console.log($('.sidebar-right-container').html().length);
+				console.log($(".post-list__dynamic").width());
+			});
 		});
 	}
 });
