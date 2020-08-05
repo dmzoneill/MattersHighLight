@@ -15,7 +15,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         file: 'inject.js'
                 });
         }
-})
+});
 
 // listen for our browerAction to be clicked
 chrome.browserAction.onClicked.addListener(function (tab) {

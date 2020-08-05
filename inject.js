@@ -573,7 +573,6 @@ var waitForEl = function (selector, callback) {
 
 
 $(document).ready(function () {
-	ElementQueries.init();
 	var m = $("meta[name=application-name]");
 	var applicationname = m.attr("content");
 	if(applicationname == "Mattermost") {
