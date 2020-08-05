@@ -90,26 +90,31 @@ function addHighlight(eventData, historial) {
 	row += "<td style='padding-left: 20px; font-size: 10pt; width: 100%; text-alight: left; padding-top: 4px'><b>" + sender_name + ": </b>&nbsp;&nbsp;" + color_msg + "</td>";
 	row += "</tr>";
 
-	var matches = post['message'].match(/(https?:\/\/[^\s]+)/gi);
-	if (matches != null && historial == false) {
-		if (window.localStorage.getItem('cb_xdgopen') == "true") {
-			var last = "";
-			for (var t = 0; t < matches.length; t++) {
-				var thematch = matches[t];
-				if(thematch.endsWith(")")) {
-					thematch = thematch.substring(0, thematch.length - 1);
-				}
-				if(thematch.endsWith("):")) {
-					thematch = thematch.substring(0, thematch.length - 2);
-				}
-				if(thematch != last) {
-					// prevent duplicate openings
-					debug("opening: " + thematch);
-					window.open(thematch, "_blank");
-					last = thematch;
-				}
+	if (historial != true && window.localStorage.getItem('cb_xdgopen') == "true") {
+		$.each(soundboard, function (key, value) {		
+			var escapedBoldMarkdown = key.replace(/\*\*/g, '\\*\\*');
+			escapedBoldMarkdown = escapedBoldMarkdown + ".*(https?:\/\/[^\\s]+)";
+			var re = new RegExp(escapedBoldMarkdown, 'gi');
+
+			var theUrl = "";
+
+			while ((m = re.exec(post['message'])) !== null) {
+				theUrl = m[1];
+				break;
 			}
-		}
+
+			if(theUrl == "") return;
+				
+			if(theUrl.endsWith(")")) {
+				theUrl = theUrl.substring(0, theUrl.length - 1);
+			}
+			if(theUrl.endsWith("):")) {
+				theUrl = theUrl.substring(0, theUrl.length - 2);
+			}
+			// prevent duplicate openings
+			debug("opening: " + theUrl);
+			window.open(theUrl, "_blank");
+		});
 	}
 
 	if (window.localStorage.getItem('cb_pagerduty') == "true" && historial == false) {
@@ -137,8 +142,10 @@ function addHighlight(eventData, historial) {
 		}
 	}
 
+	$('#highmon_history tbody').prepend(row);
 	$('#highmon_history tbody').append(row);
-	$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
+	$('#highmonBody').scrollTop($('#highmonBody')[0].scrollHeight - $('#highmonBody')[0].clientHeight);
+	//$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
 
 	var rowCount = $('#highmon_history >tbody >tr').length;
 	if (rowCount > 1000) {
@@ -190,7 +197,8 @@ function listenToSocketHighlights() {
 
 function refreshSwatch() {
 	$("#highmonBody").animate({ height: $("#slider").slider("value") }, 350, function () {
-		$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
+		//$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
+		$('#highmonBody').scrollTop($('#highmonBody')[0].scrollHeight - $('#highmonBody')[0].clientHeight);
 		window.localStorage.setItem('highmonHeight', $("#slider").slider("value"));
 		debug(window.localStorage.getItem('highmonHeight'));
 	});
@@ -410,10 +418,10 @@ function prepareHighLightMonitor() {
 		window.localStorage.setItem('cb_xdgopen', $(this).is(":checked"));
 	});
 
-
 	// busness hours
 	var hour_min = 9;
 	var hour_max = 17;
+
 	if (window.localStorage.getItem('hour_min') != null) {
 		hour_min = window.localStorage.getItem('hour_min');
 	} else {
