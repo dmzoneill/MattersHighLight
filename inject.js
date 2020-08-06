@@ -142,7 +142,6 @@ function addHighlight(eventData, historial) {
 		}
 	}
 
-	$('#highmon_history tbody').prepend(row);
 	$('#highmon_history tbody').append(row);
 	$('#highmonBody').scrollTop($('#highmonBody')[0].scrollHeight - $('#highmonBody')[0].clientHeight);
 	//$('#highmonBody').animate({ scrollTop: $('#highmonBody').prop("scrollHeight") }, 250);
