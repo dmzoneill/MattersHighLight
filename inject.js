@@ -49,7 +49,11 @@ function addHighlight(eventData, historial) {
 
 	debug(soundboard);
 
-	debug(data, true);
+	debug(data);
+
+	var create_at = new Date(parseInt(post['create_at']));
+	var hours = ('0' + create_at.getHours().toString()).slice(-2);
+	var minutes = ('0' + create_at.getMinutes().toString()).slice(-2);
 
 	$.each(soundboard, function (key, value) {
 		var escapedBoldMarkdown = key.replace(/\*\*/g, '\\*\\*');
@@ -65,6 +69,9 @@ function addHighlight(eventData, historial) {
 				debug(found + " was true, but its outside business hours");
 			} else {
 				if (historial == false && window.localStorage.getItem('cb_sounds') == "true") {
+					debug(hours, true)
+					debug(window.localStorage.getItem('hour_min'), true)
+					debug(window.localStorage.getItem('hour_max'), true)
 					playSound(val[0]);
 				}
 			}
@@ -75,10 +82,6 @@ function addHighlight(eventData, historial) {
 		return;
 	}
 
-	var create_at = new Date(parseInt(post['create_at']));
-	var hours = ('0' + create_at.getHours().toString()).slice(-2);
-	var minutes = ('0' + create_at.getMinutes().toString()).slice(-2);
-	//var seconds = ('0' + create_at.getSeconds().toString()).slice(-2);
 	var dstring = hours + ":" + minutes;
 
 	var channel_display_name = data['channel_display_name'].charAt(0) == '@' ? data['channel_display_name'].substring(1) : data['channel_display_name'];
@@ -111,9 +114,12 @@ function addHighlight(eventData, historial) {
 			if(theUrl.endsWith("):")) {
 				theUrl = theUrl.substring(0, theUrl.length - 2);
 			}
-			// prevent duplicate openings
-			debug("opening: " + theUrl);
-			window.open(theUrl, "_blank");
+
+			if (hours < window.localStorage.getItem('hour_min') || hours > window.localStorage.getItem('hour_max')) {
+				// prevent duplicate openings
+				debug("opening: " + theUrl);
+				window.open(theUrl, "_blank");
+			}
 		});
 	}
 
@@ -607,9 +613,9 @@ $(document).ready(function () {
 					$("#highmonBody").css("width", $(".post-list__dynamic").width());
 					$("#channel-header").css("width", $(".post-list__dynamic").width());
 				}
-				console.log('changed');
-				console.log($('.sidebar-right-container').html().length);
-				console.log($(".post-list__dynamic").width());
+				debug('changed');
+				debug($('.sidebar-right-container').html().length);
+				debug($(".post-list__dynamic").width());
 			});
 		});
 	}
