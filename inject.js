@@ -59,21 +59,23 @@ function addHighlight(eventData, historial) {
 		var escapedBoldMarkdown = key.replace(/\*\*/g, '\\*\\*');
 		var re = new RegExp(escapedBoldMarkdown, 'gi');
 		var matches = post['message'].match(re);
+		
 		if (matches != null) {
-			var thecolor = key.indexOf("stop the") > -1 ? "#dd0000" : "#2998fb";
+			var thecolor = key.indexOf("bsstl") > -1 ? "#dd0000" : "#2998fb";
 			color_msg = post['message'].replace(key, "<span style='color:" + thecolor + "'>" + key + "</span>")
 			val = value;
 			found = key;
 
-			if (val[1] == true && (hours < window.localStorage.getItem('hour_min') || hours > window.localStorage.getItem('hour_max'))) {
-				debug(found + " was true, but its outside business hours");
-			} else {
+			debug(hours, true);
+			debug(window.localStorage.getItem('hour_min'), true);
+			debug(window.localStorage.getItem('hour_max'), true);
+
+			if (val[1] == false || (parseInt(hours) >= parseInt(window.localStorage.getItem('hour_min')) && parseInt(hours) < parseInt(window.localStorage.getItem('hour_max')))) {
 				if (historial == false && window.localStorage.getItem('cb_sounds') == "true") {
-					debug(hours, true)
-					debug(window.localStorage.getItem('hour_min'), true)
-					debug(window.localStorage.getItem('hour_max'), true)
 					playSound(val[0]);
-				}
+				}				
+			} else {
+				debug(found + " was true, but its outside business hours", true);
 			}
 		}
 	});
@@ -115,37 +117,43 @@ function addHighlight(eventData, historial) {
 				theUrl = theUrl.substring(0, theUrl.length - 2);
 			}
 
-			if (hours < window.localStorage.getItem('hour_min') || hours > window.localStorage.getItem('hour_max')) {
+			if (parseInt(hours) >= parseInt(window.localStorage.getItem('hour_min')) && parseInt(hours) < parseInt(window.localStorage.getItem('hour_max'))) {
 				// prevent duplicate openings
 				debug("opening: " + theUrl);
 				window.open(theUrl, "_blank");
 			}
 		});
+	} else {
+		debug("Not opening windows out of hours", true);
 	}
 
-	if (window.localStorage.getItem('cb_pagerduty') == "true" && historial == false) {
-		debug("=====================================");
-		var matches = post['message'].trim().match(/[A-Z0-9]{7} \*\*TRIGGERED\*\*/gi);
-		debug(matches);
-		if (matches != null) {
-			for (var t = 0; t < matches.length; t++) {
-				debug(matches[t]);
-				parts = matches[t].split(/\s+/);
-				debug(parts);
-				$.ajax({
-					type: "PUT",
-					url: "https://api.pagerduty.com/incidents",
-					data: '{"incidents": [{"id": "' + parts[0] + '","type": "incident_reference","status": "acknowledged"}]}',
-					headers: {
-						'Accept': 'application/vnd.pagerduty+json;version=2',
-						'Authorization': 'Token token=' + window.localStorage.getItem('pagerDutyKey').trim(),
-						'Content-Type': 'application/json'
-					},
-					success: function (data) { debug(data); },
-					dataType: "json"
-				});
+	if (parseInt(hours) >= parseInt(window.localStorage.getItem('hour_min')) && parseInt(hours) < parseInt(window.localStorage.getItem('hour_max'))) {
+		if (window.localStorage.getItem('cb_pagerduty') == "true" && historial == false) {
+			debug("=====================================");
+			var matches = post['message'].trim().match(/[A-Z0-9]{7} \*\*\[.*?TRIGGERED\]\*\*/gi);
+			debug(matches);
+			if (matches != null) {
+				for (var t = 0; t < matches.length; t++) {
+					debug(matches[t]);
+					parts = matches[t].split(/\s+/);
+					debug(parts);
+					$.ajax({
+						type: "PUT",
+						url: "https://api.pagerduty.com/incidents",
+						data: '{"incidents": [{"id": "' + parts[0] + '","type": "incident_reference","status": "acknowledged"}]}',
+						headers: {
+							'Accept': 'application/vnd.pagerduty+json;version=2',
+							'Authorization': 'Token token=' + window.localStorage.getItem('pagerDutyKey').trim(),
+							'Content-Type': 'application/json'
+						},
+						success: function (data) { debug(data); },
+						dataType: "json"
+					});
+				}
 			}
 		}
+	} else {
+		debug("Not acking pagerduty out of hours", true);
 	}
 
 	$('#highmon_history tbody').append(row);
