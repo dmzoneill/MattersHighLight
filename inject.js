@@ -627,4 +627,23 @@ $(document).ready(function () {
 			});
 		});
 	}
+
+	$(document).on("keypress", function(e) { 
+		if ( e.shiftKey && ( e.key == "N" ) ) {
+			var next = $("#favoriteChannelList > li.active").next();
+			var hyper = $(next).children("a")[0];
+			setTimeout(function(){ hyper.click();}, 100);
+			e.preventDefault();
+        	return false;
+		}
+		if ( e.shiftKey && ( e.key == "P" ) ) {
+			var prev = $("#favoriteChannelList > li.active").prev();
+			var hyper = $(prev).children("a")[0];
+			setTimeout(function(){ hyper.click();}, 100);
+			e.preventDefault();
+        	return false;
+		}
+	});
 });
+
+
