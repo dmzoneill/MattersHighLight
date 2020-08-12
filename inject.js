@@ -627,27 +627,6 @@ $(document).ready(function () {
 			});
 		});
 	}
-
-	$(document).on("keypress", function(e) { 
-		//console.log('key code is: ' + e.which + ' ' + (e.ctrlKey ? 'Ctrl' : '') + ' ' +
-		//	(e.shiftKey ? 'Shift' : '') + ' ' + (e.altKey ? 'Alt' : ''));
-
-		if ( e.ctrlKey && ( e.key == "u" ) ) {
-			var prev = $("#favoriteChannelList > li.active").prev();
-			var hyper = $(next).children("a")[0];
-			setTimeout(function(){ hyper.click();}, 100);
-			e.preventDefault();
-        	return false;
-		}
-
-		if ( e.ctrlKey && ( e.key == "i" ) ) {
-			var next = $("#favoriteChannelList > li.active").next();
-			var hyper = $(next).children("a")[0];
-			setTimeout(function(){ hyper.click();}, 100);
-			e.preventDefault();
-        	return false;
-		}
-	});
 });
 
 
