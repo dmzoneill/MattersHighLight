@@ -3,9 +3,11 @@
 var highlights = [];
 var ignored_events = ["channel_viewed", "channel_viewed", "hello", "status_change", "user_updated"];
 var last_id = "m8mmriwf578hujsnuc1udr1mmo";
+var my_id = "";
 
 var highmonVisible = true;
 var debugmode = false;
+
 
 function debug(msg, override = false) {
 	if (debugmode || override) {
@@ -149,6 +151,19 @@ function addHighlight(eventData, historial) {
 						success: function (data) { debug(data); },
 						dataType: "json"
 					});
+
+					$.ajax({
+						type: "POST",
+						url: "https://api.pagerduty.com/incidents/" + parts[0] + "/snooze",
+						data: "{ 'duration': 14400 }",
+						headers: {
+							'Accept': 'application/vnd.pagerduty+json;version=2',
+							'Authorization': 'Token token=' + window.localStorage.getItem('pagerDutyKey').trim(),
+							'Content-Type': 'application/json'
+						},
+						success: function (data) { debug(data); },
+						dataType: "json"
+					});
 				}
 			}
 		}
@@ -254,6 +269,9 @@ function prepareHighLightMonitor() {
 	header += "</button>";
 	header += "<div id='highlightsTable' style='margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #454545; border-top: 1px solid #454545; padding: 10px'></div>";
 	header += "<div style='padding: 10px'>1) Input is treated as regex.<br>2) ** will be replaced by \\*\\*<br>3) * is normal the normal 0 1 or many multiplier</div>";
+	header += "<button id='authorize_button' style='display: none;'>Authorize</button>";
+    header += "<button id='signout_button' style='display: none;'>Sign Out</button>";
+    header += "<pre id='content' style='white-space: pre-wrap;'></pre>";
 	header += "</div>";
 
 	$("#highmonHeader").html("");
@@ -526,6 +544,14 @@ function addHighLightMonitor() {
 }
 
 function compactMenu() {
+	$(".SidebarChannel").each(function() {
+		$( this ).css("height", "18px");
+	});
+
+	$(".SidebarLink").each(function() {
+		$( this ).css("font-size", "9pt");
+	});
+
 	$(".sidebar-item").each(function() {
 		$( this ).css("padding-left", "10px");
 		$( this ).css("padding-top", "2px");
@@ -581,6 +607,25 @@ function compactMenu() {
 	$(".btn-close").css("font-size", "14pt");
 }
 
+function joinOutageChannels() {
+	$.ajax({
+		type: "POST",
+		url: "https://chat.canonical.com/api/v4/teams/sqmc4sz45prypmkfctwynm5yjr/channels/search",
+		data: '{"term":"outage"}',
+		success: function (data) { 
+			data.forEach(function(element){
+				console.log(element);
+				$.ajax({
+					type: "POST",
+					url: "https://chat.canonical.com/api/v4/channels/" + element.id + "/members",
+					data: '{"user_id":"' + my_id + '","channel_id":"' + element.id + '","post_root_id":""}',
+					success: function (data) { console.log("Joined " + element.display_name); }
+				});
+			});
+		},
+		dataType: "json"
+	});
+}
 
 var waitForEl = function (selector, callback) {
 	if (jQuery(selector).length) {
@@ -591,6 +636,29 @@ var waitForEl = function (selector, callback) {
 		}, 100);
 	}
 };
+
+
+function setup() {
+	addHighLightMonitor();			
+	setInterval(function(){ compactMenu(); }, 10000);
+	setInterval(function(){ joinOutageChannels(); }, 1000 * 60 * 30);	
+	joinOutageChannels();
+	compactMenu();		
+
+	$('.sidebar-right-container').bind('DOMSubtreeModified', function(){
+		if($('.sidebar-right-container').html().length == 0){
+			$("#highmonBody").css("width", "100%");
+			$("#channel-header").css("width", "100%");
+		}
+		else {
+			$("#highmonBody").css("width", $(".post-list__dynamic").width());
+			$("#channel-header").css("width", $(".post-list__dynamic").width());
+		}
+		debug('changed');
+		debug($('.sidebar-right-container').html().length);
+		debug($(".post-list__dynamic").width());
+	});
+}
 
 
 $(document).ready(function () {
@@ -608,23 +676,15 @@ $(document).ready(function () {
 		}
 
 		waitForEl("#app-content", function () {
-			addHighLightMonitor();
-			compactMenu();
-			setInterval(function(){ compactMenu(); }, 10000);
-
-			$('.sidebar-right-container').bind('DOMSubtreeModified', function(){
-				if($('.sidebar-right-container').html().length == 0){
-					$("#highmonBody").css("width", "100%");
-					$("#channel-header").css("width", "100%");
-				}
-				else {
-					$("#highmonBody").css("width", $(".post-list__dynamic").width());
-					$("#channel-header").css("width", $(".post-list__dynamic").width());
-				}
-				debug('changed');
-				debug($('.sidebar-right-container').html().length);
-				debug($(".post-list__dynamic").width());
-			});
+			$.ajax({
+				type: "GET",
+				url: "https://chat.canonical.com/api/v4/users/me",
+				success: function (data) { 
+					my_id = data.id;
+					setup();
+				},
+				dataType: "json"
+			});			
 		});
 	}
 });

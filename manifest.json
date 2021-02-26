@@ -1,10 +1,10 @@
 {
-    "manifest_version": 2, 
-    "name": "MatterMost Highlight Monitor", 
-    "description": "Highlight monitor and more",
-    "version": "1.0",
-    "author": "David O Neill",
-    "background": {
+  "manifest_version": 2, 
+  "name": "MatterMost Highlight Monitor", 
+  "description": "Highlight monitor and more",
+  "version": "1.0",
+  "author": "David O Neill",
+  "background": {
     "scripts": [
       "background.js"
     ],
@@ -27,7 +27,8 @@
     "settings.png",
     "play.png",
     "delete.png",
-    "add.png"
+    "add.png",
+    "internet.mp3"
   ],
   "browser_action": {
     "default_title": "MatterMost Highlight Monitor"
@@ -38,5 +39,12 @@
     "tabs",
     "storage",
     "unlimitedStorage"
-  ]
+  ],
+  "oauth2": {
+    "client_id": "109073653369-6umdt06ur5jn9cu80giu4emqh2ej9l36.apps.googleusercontent.com",
+    "scopes": [
+        "https://www.googleapis.com/auth/drive.appdata"
+    ]
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com https://cdn.rudderlabs.com/ https://*.rudderlabs.com/ 'unsafe-inline'; object-src 'self'"
 }
