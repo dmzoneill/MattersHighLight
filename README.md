@@ -6,7 +6,7 @@
 
 Get started:
 
-```
+```text
 git clone https://github.com/dmzoneill/MattersHighLight.git
 cd MattersHighLight
 mkdir userdir
@@ -16,7 +16,7 @@ mkdir userdir
 
 Modify manifest.json (to provide your own sounds) if you wish:
 
-```
+```text
 vim manifest.json
 ```
 
@@ -24,7 +24,7 @@ vim manifest.json
 
 Prep the icon, seperate binary and copy the desktop file into place
 
-```
+```text
 sudo cp /opt/google/chrome/google-chrome /opt/google/chrome/mattersmost
 sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.png
 ```
@@ -33,7 +33,7 @@ sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.pn
 
 Creating a seperate window with matters most icon
 
-```
+```text
 cat HighMonMattersMost.desktop
 [Desktop Entry]
 Encoding=UTF-8
@@ -52,7 +52,7 @@ Categories=Network;WebBrowser;
 
 Copy desktop file in place
 
-```
+```text
 cp HighMonMattersMost.desktop  ~/.local/share/applications/
 ```
 
@@ -61,7 +61,7 @@ cp HighMonMattersMost.desktop  ~/.local/share/applications/
 To install the extension, the first time you need to run it without "--app=<https://chat.yourhost.com>"
 go to:
 
-```
+```text
 extensions > load plugin > select to plugin folder
 ```
 
@@ -69,7 +69,7 @@ extensions > load plugin > select to plugin folder
 
 Visit your matters most site:
 
-```
+```text
 click settings, provide MM auth token and pagerduty key
 ```
 
