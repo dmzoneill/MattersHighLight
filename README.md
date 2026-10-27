@@ -74,8 +74,8 @@ click settings, provide MM auth token and pagerduty key
 ```
 
 <br>
-<img src='2.png'>
+<img src='2.png' alt='Screenshot 2'>
 
 <br>
-<img src='1.png'>
+<img src='1.png' alt='Screenshot 1'>
 # Bootstack-Highlight-Monitor
