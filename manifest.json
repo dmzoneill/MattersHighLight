@@ -39,7 +39,7 @@
     "unlimitedStorage"
   ],
   "oauth2": {
-    "client_id": "10.0.12653369-6umdt06ur5jn9cu80giu4emqh2ej9l36.apps.googleusercontent.com",
+    "client_id": "10.0.13653369-6umdt06ur5jn9cu80giu4emqh2ej9l36.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/drive.appdata"]
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com https://cdn.rudderlabs.com/ https://*.rudderlabs.com/ 'unsafe-inline'; object-src 'self'",
