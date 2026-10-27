@@ -22,7 +22,7 @@ vim manifest.json
 
 <br>
 
-Prep the icon, seperate binary and copy the desktop file into place
+Prep the icon, separate binary and copy the desktop file into place
 
 ```text
 sudo cp /opt/google/chrome/google-chrome /opt/google/chrome/mattersmost
@@ -31,7 +31,7 @@ sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.pn
 
 <br>
 
-Creating a seperate window with matters most icon
+Creating a separate window with matters most icon
 
 ```text
 cat HighMonMattersMost.desktop
