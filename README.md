@@ -1,5 +1,9 @@
 # MattersHighLight
 
+<p align="center">
+  <img src=".github/logo.png" alt="MattersHighLight logo" width="128" />
+</p>
+
 Get started:
 
 ```
@@ -30,7 +34,7 @@ sudo inkscape -z -w 128 -h 128 /opt/Mattermost/icon.svg -e /opt/Mattermost/mm.pn
 Creating a seperate window with matters most icon
 
 ```
-cat HighMonMattersMost.desktop 
+cat HighMonMattersMost.desktop
 [Desktop Entry]
 Encoding=UTF-8
 Version=1.0
@@ -54,7 +58,7 @@ cp HighMonMattersMost.desktop  ~/.local/share/applications/
 
 <br>
 
-To install the extension, the first time you need to run it without "--app=https://chat.yourhost.com"
+To install the extension, the first time you need to run it without "--app=<https://chat.yourhost.com>"
 go to:
 
 ```
@@ -63,7 +67,7 @@ extensions > load plugin > select to plugin folder
 
 <br>
 
-Visit your matters most website:
+Visit your matters most site:
 
 ```
 click settings, provide MM auth token and pagerduty key
