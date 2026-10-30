@@ -1,3 +1,8 @@
+// Escape untrusted chat content before it is inserted as HTML.
+function escapeHtml(str) {
+	return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 // this is the code which will be injected into a given page...
 
 var highlights = [];
@@ -45,7 +50,7 @@ function addHighlight(eventData, historial) {
 
 	var found = false;
 	var val = "";
-	var color_msg = post['message'];
+	var color_msg = escapeHtml(post['message']);
 
 	var soundboard = JSON.parse(window.localStorage.getItem('soundboard'));
 
@@ -64,7 +69,7 @@ function addHighlight(eventData, historial) {
 		
 		if (matches != null) {
 			var thecolor = key.indexOf("bsstl") > -1 ? "#dd0000" : "#2998fb";
-			color_msg = post['message'].replace(key, "<span style='color:" + thecolor + "'>" + key + "</span>")
+			color_msg = escapeHtml(post['message']).replace(escapeHtml(key), "<span style='color:" + thecolor + "'>" + escapeHtml(key) + "</span>")
 			val = value;
 			found = key;
 
@@ -93,8 +98,8 @@ function addHighlight(eventData, historial) {
 	//Open Sans", sans-serif
 	var row = "<tr class='highlightRow'>";
 	row += "<td style='padding-left: 10px; padding-right: 20px; width: 70px; white-space: nowrap; padding-top: 4px'><span style='font-size: 9pt; color: #83827e;'>" + dstring + "</span></td>";
-	row += "<td style='padding-left: 20px; font-size: 10pt; width: 120px; white-space: nowrap; padding-top: 4px'>" + channel_display_name + "</td>";
-	row += "<td style='padding-left: 20px; font-size: 10pt; width: 100%; text-alight: left; padding-top: 4px'><b>" + sender_name + ": </b>&nbsp;&nbsp;" + color_msg + "</td>";
+	row += "<td style='padding-left: 20px; font-size: 10pt; width: 120px; white-space: nowrap; padding-top: 4px'>" + escapeHtml(channel_display_name) + "</td>";
+	row += "<td style='padding-left: 20px; font-size: 10pt; width: 100%; text-alight: left; padding-top: 4px'><b>" + escapeHtml(sender_name) + ": </b>&nbsp;&nbsp;" + color_msg + "</td>";
 	row += "</tr>";
 
 	if (historial != true && window.localStorage.getItem('cb_xdgopen') == "true") {
